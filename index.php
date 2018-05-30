@@ -2,20 +2,19 @@
 
 require_once("vendor/autoload.php");
 
-$app = new \Slim\Slim();
+use \Slim\Slim;
+use \Hcode\Page;
+
+$app = new Slim(); //Rotas
 
 $app->config('debug', true);
 
-$app->get('/', function() {
+$app->get('/', function() { //Quando chamar via get a pasta raiz , execute isso 
 
-	$sql = new Hcode\Db\Sql();
+  $page = new Page(); //O construct vai criar o header
+  $page->setTpl("index"); // Carrega o conteúdo
+}); //O destruct do Hcode\Page vai criar o footer
 
-	$results = $sql -> select("Select * from tb_users");
+$app->run(); //Tudo carregado então roda.
 
-	echo json_encode($results);
-
-});
-
-$app->run();
-
- ?>
+?>
