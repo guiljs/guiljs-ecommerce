@@ -261,4 +261,14 @@ $app->get("/admin/categories/:id/delete", function ($id) {
     exit;
 });
 
+$app->get("/categories/:id", function ($id) {
+    $category = new Category();
+
+    $category->get((int) $id);
+    $page = new Page();
+    $page->setTpl("category", array(
+        "category" => $category->getValues(),
+        "products" => []
+    ));
+});
 $app->run(); //Tudo carregado então roda.

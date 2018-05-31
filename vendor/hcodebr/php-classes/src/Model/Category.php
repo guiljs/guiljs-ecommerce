@@ -30,6 +30,8 @@ class Category extends Model
         // $results = $sql->select("SELECT * from tb_categories where idcategory = LAST_INSERT_ID();");
 
         $this->setData($results[0]);
+
+        Category::updateFile();
     }
 
     public function get($idcategory)
@@ -42,28 +44,32 @@ class Category extends Model
         $this->setData($results[0]);
     }
 
-    public function update()
-    {
-        $sql = new Sql();
-
-        $results = $sql->select("CALL sp_usersupdate_save(:iduser, :desperson, :deslogin, :despassword, :desemail, :nrphone, :inadmin)", array(
-            "iduser" => $this->getiduser(),
-            "desperson" => $this->getdesperson(),
-            "deslogin" => $this->getdeslogin(),
-            "despassword" => $this->getdespassword(),
-            "desemail" => $this->getdesemail(),
-            "nrphone" => $this->getnrphone(),
-            "inadmin" => $this->getinadmin(),
-        ));
-
-        $this->setData($results[0]);
-    }
-
     public function delete()
     {
         $sql = new Sql();
         $sql->query("delete from tb_categories where idcategory = :id", array(
             ":id" => $this->getidcategory(),
         ));
+
+        Category::updateFile();
+    }
+
+    public static function updateFile()
+    {
+        // $category = new Category();
+        // $results = $category->listAll();
+        $html =[];
+
+        $categories = Category::listAll();
+
+        foreach ($categories as $row) {
+            # code...
+
+            //<li><a href="#">Categoria Um</a></li>
+
+            array_push($html, '<li><a href="/categories/'.$row["idcategory"].'">'.$row["descategory"].'</a></li>');
+        }
+
+        file_put_contents($_SERVER['DOCUMENT_ROOT'].DIRECTORY_SEPARATOR.'views'.DIRECTORY_SEPARATOR.'categories-menu.html', implode('', $html));
     }
 }
