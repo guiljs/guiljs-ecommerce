@@ -4,12 +4,13 @@ namespace Hcode;
 
 use Rain\Tpl;
 
-class Mailer {
 
+class Mailer {
+	
 	const FROM_NAME = "Guiljs e-Commerce";
 	const USERNAME = "guiljsecommerce@gmail.com";
 	const PASSWORD = "guiljs123456";
-
+	
 	private $mail;
 
 	public function __construct($toAddress, $toName, $subject, $tplName, $data = array())
