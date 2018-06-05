@@ -15,12 +15,13 @@ $app->get('/', function () { //Quando chamar via get a pasta raiz , execute isso
 }); //O destruct do Hcode\Page vai criar o footer
 
 $app->get("/categories/:id", function ($id) {
+
   $category = new Category();
 
   $category->get((int) $id);
   $page = new Page();
   $page->setTpl("category", array(
     "category" => $category->getValues(),
-    "products" => []
+    "products" => Product::checkList($category->getProducts())
   ));
 });
