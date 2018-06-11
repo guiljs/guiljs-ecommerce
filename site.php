@@ -31,7 +31,7 @@ for ($i=1; $i < $pagination['pages']; $i++) {
     'page'=>$i
   ]);
 }
-
+  
   $page = new Page();
 
   $page->setTpl("category", array(
@@ -39,4 +39,15 @@ for ($i=1; $i < $pagination['pages']; $i++) {
     "products" => $pagination['data'],
     'pages'=>$pages
   ));
+});
+
+$app->get('/products/:desurl', function($desurl){
+  $product = new Product();
+  $product->getFromUrl($desurl);
+
+  $page = new Page();
+  $page->setTpl("product-detail",[
+    'product'=>$product->getValues(),
+    'categories'=>$product->getCategories()
+  ]);
 });

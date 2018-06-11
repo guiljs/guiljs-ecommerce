@@ -16,13 +16,13 @@ class Product extends Model
 
     public static function checkList($list)
     {
-      foreach ($list as &$row) {
-        $p = new Product();
-        $p->setData($row);
-        $row = $p->getValues();
-      }
+        foreach ($list as &$row) {
+            $p = new Product();
+            $p->setData($row);
+            $row = $p->getValues();
+        }
 
-      return $list;
+        return $list;
     }
 
     public function save()
@@ -135,5 +135,23 @@ class Product extends Model
 
         $this->checkPhoto();
 
+    }
+
+    public function getFromUrl($desurl)
+    {
+        $sql = new Sql();
+        $results = $sql->select("SELECT * FROM tb_products WHERE desurl = :desurl LIMIT 1", [
+            ':desurl' => $desurl,
+        ]);
+
+        $this->setData($results[0]);
+    }
+    public function getCategories()
+    {
+        $sql = new Sql();
+
+        return $sql->select("SELECT * FROM tb_categories a INNER JOIN tb_productscategories b on a.idcategory = b.idcategory WHERE b.idproduct = :idproduct", [
+            ':idproduct' => $this->getidproduct(),
+        ]);
     }
 }
