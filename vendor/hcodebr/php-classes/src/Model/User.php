@@ -10,6 +10,40 @@ class User extends Model
 {
     const SESSION = "User";
     const SECRET = "HcodePhp7_Secret";
+
+    public function getFromSession()
+    {
+        $user = new User();
+
+        if (isset($_SESSION[User::SESSION]) && (int) $_SESSION[User::SESSION]['iduser'] > 0) {
+
+            $user->setData($_SESSION[User::SESSION]);
+
+        }
+        return $user;
+    }
+
+    public function checkLogin($inadmin = true)
+    {
+        if (
+            !isset($_SESSION[User::SESSION])
+            || !$_SESSION[User::SESSION]
+            || !(int) $_SESSION[User::SESSION]["iduser"] > 0
+        ) {
+            //Não está logado
+            return false;
+        } else {
+            //Está logado
+            if ($inadmin === true && $_SESSION[User::SESSION]['inadmin'] === true) {
+                return true;
+            } else if ($inadmin === false) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+    }
+
     public static function login($login, $password)
     {
         $sql = new Sql();
@@ -38,12 +72,7 @@ class User extends Model
 
     public static function verifyLogin($inadmin = true)
     {
-        if (
-            !isset($_SESSION[User::SESSION])
-            || !$_SESSION[User::SESSION]
-            || !(int) $_SESSION[User::SESSION]["iduser"] > 0
-            || (bool) $_SESSION[User::SESSION]["inadmin"] !== $inadmin
-        ) {
+        if (User::checkLogin($inadmin)) {
             header("Location: /admin/login"); //redirect
             exit;
         }
@@ -246,9 +275,9 @@ class User extends Model
     {
         $sql = new Sql();
 
-        $sql->query("UPDATE tb_users SET despassword = :password WHERE iduser = :iduser",array(
-          ":password"=>$password,
-          ":iduser"=>$this->getiduser()
+        $sql->query("UPDATE tb_users SET despassword = :password WHERE iduser = :iduser", array(
+            ":password" => $password,
+            ":iduser" => $this->getiduser(),
         ));
     }
 }
