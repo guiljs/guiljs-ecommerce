@@ -136,8 +136,8 @@ $app->get('/login', function () {
     $page = new Page();
     $page->setTpl('login', [
         'error' => User::getError(),
-        'errorRegister' =>User::getErrorRegister(),
-        'registerValues'=>(isset($_SESSION['registerValues'])) ? $_SESSION['registerValues'] : ['name'=>'', 'email'=>'', 'phone'=>'']
+        'errorRegister' => User::getErrorRegister(),
+        'registerValues' => (isset($_SESSION['registerValues'])) ? $_SESSION['registerValues'] : ['name' => '', 'email' => '', 'phone' => ''],
     ]);
 });
 
@@ -169,7 +169,7 @@ $app->post('/register', function () {
         header("Location: /login");
         exit;
     }
-    
+
     if (!isset($_POST['email']) || $_POST['email'] == '') {
         User::setErrorRegister("Preencha o seu email.");
 
@@ -207,4 +207,58 @@ $app->post('/register', function () {
 
     header("Location: /checkout");
     exit;
+});
+
+$app->get("/forgot", function () {
+    $page = new Page();
+
+    $page->setTpl("forgot");
+});
+
+$app->post("/forgot", function () {
+
+    User::getForgot($_POST["email"], false);
+
+    header("Location: /forgot/sent");
+    exit;
+});
+
+$app->get("/forgot/sent", function () {
+
+    $page = new Page();
+
+    $page->setTpl("forgot-sent");
+
+});
+
+$app->get("/forgot/reset", function () {
+    $forgot = User::validForgotDecrypt($_GET["code"]);
+
+    $page = new Page();
+
+    $page->setTpl("forgot-reset", array(
+        "name" => $forgot["desperson"],
+        "code" => $_GET["code"],
+    ));
+});
+
+$app->post("/forgot/reset", function () {
+
+    $forgot = User::validForgotDecrypt($_POST["code"]);
+
+    User::setForgotUsed($forgot["idrecovery"]);
+
+    $user = new User();
+
+    $user->get((int) $forgot["iduser"]);
+
+    $password = password_hash($_POST["password"], PASSWORD_DEFAULT, [
+        "cost" => 12,
+    ]);
+
+    $user->setPassword($password);
+
+    $page = new Page();
+
+    $page->setTpl("forgot-reset-success");
 });

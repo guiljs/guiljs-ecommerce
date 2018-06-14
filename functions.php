@@ -2,8 +2,11 @@
 
 use \Hcode\Model\User;
 
-function formatPrice(float $value)
+function formatPrice($value)
 {
+    if (!$value > 0) {
+
+    }
     return number_format($value, 2, ",", ".");
 }
 
