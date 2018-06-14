@@ -103,7 +103,7 @@ class User extends Model
         $sql = new Sql();
 
         $results = $sql->select("CALL sp_users_save(:desperson, :deslogin, :despassword, :desemail, :nrphone, :inadmin)", array(
-            "desperson" => ut8_decode($this->getdesperson()),
+            "desperson" => utf8_decode($this->getdesperson()),
             "deslogin" => $this->getdeslogin(),
             "despassword" => User::getPasswordHash($this->getdespassword()),
             "desemail" => $this->getdesemail(),
@@ -313,6 +313,14 @@ class User extends Model
     public static function setErrorRegister($msg)
     {
         $_SESSION[User::ERROR_REGISTER] = $msg;
+    }
+
+    public static function getErrorRegister()
+    {
+        $msg = (isset($_SESSION[User::ERROR_REGISTER]) && $_SESSION[User::ERROR_REGISTER]) ? $_SESSION[User::ERROR_REGISTER] : '';
+        User::clearError();
+        return $msg;
+
     }
 
     public function clearErrorRegister()
